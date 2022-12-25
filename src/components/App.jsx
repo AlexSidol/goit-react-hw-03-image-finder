@@ -69,8 +69,6 @@ class App extends Component {
           </p>
         )}
 
-        {status === 'pending' && <Loader />}
-
         {status === 'rejected' && <p>Sorry, try again late</p>}
 
         {status === 'resolved' && (
@@ -79,6 +77,8 @@ class App extends Component {
             {showButton && <Button onClick={this.renderImages} />}
           </div>
         )}
+
+        {status === 'pending' && <Loader />}
       </div>
     );
   }
