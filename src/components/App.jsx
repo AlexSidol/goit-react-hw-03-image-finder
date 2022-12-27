@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import pixabayApi from '../services/pixabay-api';
 import ImageGallery from './ImageGallery/ImageGallery';
-
+import filteredArr from '../services/filteredArr';
 import Searchbar from '../components/Searchbar/Searchbar.jsx';
 import Button from './Button/Button';
 import Loader from './Loader/Loader';
@@ -17,7 +17,6 @@ class App extends Component {
     page: 1,
     images: [],
     error: null,
-    perPage: 12,
     showButton: false,
   };
 
@@ -26,18 +25,22 @@ class App extends Component {
   };
 
   renderImages = () => {
-    const { requestInfo, page, perPage } = this.state;
-
+    const { requestInfo, page } = this.state;
+    const perPage = 12;
     pixabayApi
-      .fetchImages(requestInfo, page, perPage)
+      .fetchImages(requestInfo, page)
       .then(response => {
+        // console.log(response.hits);
         if (response.hits.length === 0) {
           toast.info(' No results for your request, try again ');
           this.setState({ status: 'resolved', showButton: false });
           return;
         }
+
+        const normalizedData = filteredArr(response.hits);
+
         return this.setState(prevState => ({
-          images: [...prevState.images, ...response.hits],
+          images: [...prevState.images, ...normalizedData],
           status: 'resolved',
           page: prevState.page + 1,
           showButton: page < Math.ceil(response.totalHits / perPage),
